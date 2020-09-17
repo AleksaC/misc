@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 
-# The script works for repos cloned from github using its https option
-# It converts urls of the form https://github.com/owner/repo.git to git@github.com/owner/repo.git
-# Needs to be tested for gitlab and bitbucket repos and also check what happens if 
-# for instance .git is missing at the end
 
 import argparse
 import subprocess
