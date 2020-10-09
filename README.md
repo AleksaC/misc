@@ -1,2 +1,2 @@
 # misc
-My various scripts, utilities and notes
+Miscelaneous scripts, utilities and notes

@@ -1,6 +1,6 @@
 - Use -E or -r for extended regular expresions (using ?,[] etc.)
 - Use -i to edit file in-place
-- sed is meant to be used for line-based input (i.e. it reads a line strinping the newline and adds it to pattern space)
+- sed is meant to be used for line-based input (i.e. it reads a line stripping the newline and adds it to pattern space)
 - Workaround allowing us to use regexes with newlines:
   - example for regex matching 
 
