@@ -1,0 +1,21 @@
+repos:
+  - repo: local
+    hooks:
+      - id: todo
+        name: Prevent TODOs from being commited
+        language: pygrep
+        entry: "(?i)[t]odo:"
+
+      - id: Cargo fmt
+        name: fmt
+        language: system
+        types: [file, rust]
+        entry: cargo fmt --
+        pass_filenames: false
+
+      - id: clippy
+        name: Cargo clippy
+        language: system
+        types: [file, rust]
+        entry: cargo clippy -- -D warnings
+        pass_filenames: false
