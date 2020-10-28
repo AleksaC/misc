@@ -6,16 +6,16 @@ repos:
         language: pygrep
         entry: "(?i)[t]odo:"
 
-      - id: Cargo fmt
-        name: fmt
+      - id: fmt
+        name: Cargo fmt
         language: system
-        types: [file, rust]
+        types: [rust]
         entry: cargo fmt --
         pass_filenames: false
 
       - id: clippy
         name: Cargo clippy
         language: system
-        types: [file, rust]
+        types: [rust]
         entry: cargo clippy -- -D warnings
         pass_filenames: false
