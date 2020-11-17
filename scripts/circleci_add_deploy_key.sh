@@ -14,7 +14,7 @@ curl \
     "https://api.github.com/repos/$GH_USER/$GH_REPO/keys" \
     -d "{\"key\":\"$(cat id_rsa.pub)\", \"title\": \"CircleCI push\"}"
 
-curl \ 
+curl \
     -X POST \
     -H "Content-Type: application/json" \
     -H "Circle-Token: $CIRCLE_TOKEN" \
