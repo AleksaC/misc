@@ -4,15 +4,15 @@
 
 const REDIRECTS = [
   {
-    urlPattern: "https?://circleci.com/?",
+    urlPattern: "https?://circleci.com/?$",
     target: "https://app.circleci.com",
   },
   {
-    urlPattern: "https?://discord.com/?",
+    urlPattern: "https?://discord.com/?$",
     target: "https://discord.com/app",
   },
   {
-    urlPattern: "https?://aws.amazon.com/?",
+    urlPattern: "https?://aws.amazon.com/?$",
     target: "https://console.aws.amazon.com",
   },
 ];
