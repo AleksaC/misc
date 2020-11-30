@@ -9,7 +9,6 @@ import textwrap
 from typing import NamedTuple
 from typing import Optional
 from typing import Sequence
-from typing import Tuple
 
 PRETTY_FORMAT = "[%H] %D"
 VERSION_RE = re.compile(
@@ -21,6 +20,10 @@ class Version(NamedTuple):
     major: int
     minor: int
     patch: int
+    string: str  # This attribute is needed because both vx.y.z and x.y.z tags are supported
+
+    def __repr__(self):
+        return self.string
 
     def __lte__(self, other: "Version") -> bool:
         if self.major < other.major or self.major > other.major:
@@ -60,7 +63,7 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     return known
 
 
-def get_latest_version(rev: str = "HEAD") -> Optional[Tuple[str, Version]]:
+def get_latest_version(rev: str = "HEAD") -> Optional[Version]:
     res = subprocess.run(
         ["git", "log", f"--pretty=format:{PRETTY_FORMAT}", rev],
         stdout=subprocess.PIPE,
@@ -75,7 +78,7 @@ def get_latest_version(rev: str = "HEAD") -> Optional[Tuple[str, Version]]:
 
     latest_version = re.search(VERSION_RE, revs)
     if latest_version is None:
-        return "v0.0.1", Version(0, 0, 1)
+        return Version(0, 0, 0, "v0.0.0")
     latest_sha, version, *version_numbers = latest_version.groups()
 
     res = subprocess.run(["git", "rev-parse", rev], stdout=subprocess.PIPE)
@@ -84,10 +87,12 @@ def get_latest_version(rev: str = "HEAD") -> Optional[Tuple[str, Version]]:
         print(f"{rev} is already tagged by {version}")
         return None
 
-    return version, Version(*map(int, version_numbers))
+    major, minor, patch = map(int, version_numbers)
+
+    return Version(major, minor, patch, version)
 
 
-def get_next_version(rev: str = "HEAD") -> Optional[Tuple[str, Version]]:
+def get_next_version(rev: str = "HEAD") -> Optional[Version]:
     res = subprocess.run(
         ["git", "log", f"--pretty=format:{PRETTY_FORMAT}", f"{rev}.."],
         stdout=subprocess.PIPE,
@@ -105,13 +110,12 @@ def get_next_version(rev: str = "HEAD") -> Optional[Tuple[str, Version]]:
         return None
     else:
         _, version, *version_numbers = next_version.groups()
-        return version, Version(*map(int, version_numbers))
+        major, minor, patch = map(int, version_numbers)
+        return Version(major, minor, patch, version)
 
 
-def increment_version(
-    version_string: str, version: Version, increment: str
-) -> Tuple[str, Version]:
-    major, minor, patch = version
+def increment_version(version: Version, increment: str) -> Version:
+    major, minor, patch, version_string = version
     if increment == "--major":
         major += 1
         minor = 0
@@ -125,7 +129,7 @@ def increment_version(
     if version_string.startswith("v"):
         version_string = f"v{major}.{minor}.{patch}"
 
-    return version_string, Version(major, minor, patch)
+    return Version(major, minor, patch, version_string)
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
@@ -135,18 +139,18 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     if current_version is None:
         return 1
 
-    new_tag, new_version = increment_version(*current_version, args.version)
+    new_version = increment_version(current_version, args.version)
 
-    next_version_string, next_version = get_next_version(args.rev)
+    next_version = get_next_version(args.rev)
     if next_version is not None and next_version <= new_version:
         print(
-            f"Cannot tag {args.rev} with version {new_tag}, there already exists "
-            f"a tag with version superseding it - {next_version_string}"
+            f"Cannot tag {args.rev} with version {new_version}, there already exists "
+            f"a tag with version superseding it - {next_version}"
         )
         return 1
 
-    print(f"Adding {new_tag} tag to {args.rev}")
-    res = subprocess.run(["git", "tag", new_tag, args.rev])
+    print(f"Adding {new_version} tag to {args.rev}")
+    res = subprocess.run(["git", "tag", new_version.string, args.rev])
 
     return res.returncode
 
