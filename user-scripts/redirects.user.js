@@ -15,6 +15,10 @@ const REDIRECTS = [
     urlPattern: "https?://aws.amazon.com/?$",
     target: "https://console.aws.amazon.com",
   },
+  {
+    urlPattern: "https?://(www.)?netlify.com/?$",
+    target: "https://app.netlify.com",
+  },
 ];
 
 for (const redirect of REDIRECTS) {
