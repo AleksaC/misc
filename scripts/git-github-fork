@@ -28,25 +28,26 @@ import os
 import subprocess
 import sys
 import urllib.request
+
 from typing import NoReturn
 from typing import Sequence
 
 
 def get_slug() -> str:
-    cmd = ('git', 'config', 'remote.origin.url')
+    cmd = ("git", "config", "remote.origin.url")
     remote = subprocess.check_output(cmd).strip().decode()
-    assert remote.startswith('git@github.com:'), remote
-    _, _, slug = remote.partition(':')
+    assert remote.startswith("git@github.com:"), remote
+    _, _, slug = remote.partition(":")
     return slug
 
 
 def load_config() -> dict[str, str]:
-    filename = os.path.expanduser('~/.github-auth.json')
+    filename = os.path.expanduser("~/.github-auth.json")
     mode = os.stat(filename).st_mode & 0o777
-    if sys.platform != 'win32' and mode != 0o600:
+    if sys.platform != "win32" and mode != 0o600:
         raise SystemExit(
-            f'{filename} has too-permissive permissions, Expected 0o600, '
-            f'got 0o{mode:o}',
+            f"{filename} has too-permissive permissions, Expected 0o600, "
+            f"got 0o{mode:o}",
         )
 
     with open(filename) as f:
@@ -54,17 +55,17 @@ def load_config() -> dict[str, str]:
 
 
 def fork(slug: str, token: str) -> None:
-    url = f'https://api.github.com/repos/{slug}/forks'
+    url = f"https://api.github.com/repos/{slug}/forks"
     print(url)
-    request = urllib.request.Request(url, data=b'')
-    request.add_header('Authorization', f'token {token}')
+    request = urllib.request.Request(url, data=b"")
+    request.add_header("Authorization", f"token {token}")
     urllib.request.urlopen(request)
 
 
 def add_remote(slug: str, username: str) -> NoReturn:
-    _, _, repo_name = slug.partition('/')
-    slug = f'{username}/{repo_name}'
-    cmd = ('git', 'remote', 'add', username, f'git@github.com:{slug}')
+    _, _, repo_name = slug.partition("/")
+    slug = f"{username}/{repo_name}"
+    cmd = ("git", "remote", "add", username, f"git@github.com:{slug}")
     os.execvp(cmd[0], cmd)
 
 
@@ -74,9 +75,9 @@ def main(argv: Sequence[str] | None = None) -> NoReturn:
 
     slug = get_slug()
     auth = load_config()
-    fork(slug, auth['token'])
-    add_remote(slug, auth['username'])
+    fork(slug, auth["token"])
+    add_remote(slug, auth["username"])
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     exit(main())
