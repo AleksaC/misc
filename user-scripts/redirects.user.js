@@ -19,6 +19,10 @@ const REDIRECTS = [
     urlPattern: "https?://(www.)?netlify.com/?$",
     target: "https://app.netlify.com",
   },
+  {
+    urlPattern: "https?://(www.)?bitwarden.com/?$",
+    target: "https://vault.bitwarden.com",
+  },
 ];
 
 for (const redirect of REDIRECTS) {
