@@ -23,6 +23,10 @@ const REDIRECTS = [
     urlPattern: "https?://(www.)?bitwarden.com/?$",
     target: "https://vault.bitwarden.com",
   },
+  {
+    urlPattern: "https?://(www.)?cloudflare.com/?$",
+    target: "https://dash.cloudflare.com",
+  },
 ];
 
 for (const redirect of REDIRECTS) {
